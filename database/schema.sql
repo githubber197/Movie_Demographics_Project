@@ -7,7 +7,7 @@ CREATE TABLE users(
 
 CREATE TABLE movies(
     movie_id SERIAL PRIMARY KEY,
-    tmdb_id INT UNIQUE NOT NULL,
+    tmdb_id VARCHAR(20) UNIQUE NOT NULL,
     movie_title VARCHAR(255) NOT NULL,
     movie_description TEXT
 );
