@@ -55,7 +55,14 @@ def load_movies(movies):
     conn.commit()
     cursor.close()
     conn.close()
-
+def get_existing_ids():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT tmdb_id FROM movies")
+    existing_ids = {row[0] for row in cursor.fetchall()}
+    cursor.close()
+    conn.close()
+    return existing_ids
 if __name__ == "__main__":
     test_conn = get_connection()
     print("Connection successful!")
