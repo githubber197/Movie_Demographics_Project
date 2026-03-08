@@ -2,6 +2,7 @@
 from dotenv import load_dotenv
 import os
 import requests
+import time
 
 load_dotenv()
 api_key = os.getenv("OMDB_API_KEY")
@@ -35,6 +36,20 @@ def fetch_movie_details(imdb_id):
     else:
         print(f"HTTP Error: {response.status_code}")
         return None
+
+
+def fetch_with_retry(imdb_id, max_retries=3):
+    wait_time = 1
+    for attempt in range(max_retries):
+        try:
+            result = fetch_movie_details(imdb_id)
+            if result:
+                return result
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: {e}")
+            time.sleep(wait_time * 60)
+            wait_time *= 2
+    return None
 if __name__ == "__main__":
     movies = fetch_movies("Inception")
     print(movies)
