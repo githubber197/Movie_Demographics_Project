@@ -1,19 +1,20 @@
-from pipeline.extract import fetch_movies, fetch_movie_details
+import time
+from pipeline.extract import fetch_movie_details
 from pipeline.transform import transform_movie_data
 from pipeline.load import load_movies
 
+def read_movie_ids(file_path):
+    with open(file_path, "r") as f:
+        return [line.strip() for line in f]
+
 if __name__ == "__main__":
-    # Step 1 - Extract
-    raw_movies = fetch_movies("Inception")
+    imdb_ids = read_movie_ids("data/raw/movies_list.txt")
     
-    # Step 2 - Transform each movie
     transformed = []
-    for movie in raw_movies:
-        details = fetch_movie_details(movie.get("imdbID"))
-        clean = transform_movie_data(details)
-        if clean:
-            transformed.append(clean)
+    for imdb_id in imdb_ids:
+        movie_list = fetch_movie_details(imdb_id)
+        transformed.append(transform_movie_data(movie_list))
+        time.sleep(0.5)
     
-    # Step 3 - Load
     load_movies(transformed)
     print("Pipeline complete!")
