@@ -2,13 +2,13 @@ import time
 from pipeline.transform import transform_movie_data
 from pipeline.load import load_movies, get_existing_ids
 from pipeline.extract import fetch_with_retry
+from pipeline.load_movielens import read_links
 
-def read_movie_ids(file_path):
-    with open(file_path, "r") as f:
-        return [line.strip() for line in f]
 
 def run_pipeline():
-    imdb_ids = read_movie_ids("data/raw/movies_list.txt")
+    count = 0
+    links = read_links()
+    imdb_ids = links.values()
     existing_ids = get_existing_ids()
     transformed = []
     
@@ -22,6 +22,11 @@ def run_pipeline():
             continue
         transformed.append(transform_movie_data(movie_list))
         time.sleep(0.5)
+        count += 1
+        if count == 1000:
+            print("Stop limit reached of 1000 movies, ending pipeline.")
+            break
+            
     
     load_movies(transformed)
     print("Pipeline complete!")

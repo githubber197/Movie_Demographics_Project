@@ -1,7 +1,7 @@
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
     user_name VARCHAR(255),
-    user_age INT NOT NULL,
+    user_age VARCHAR(10),
     user_country VARCHAR(255) NOT NULL
 );
 
