@@ -1,12 +1,14 @@
 import pandas as pd
 from faker import Faker
 import random
-from pipeline.load import get_connection
+from load import get_connection
+from pathlib import Path
 
 AGE_GROUPS = ["13-17","18-25", "26-35", "36-45", "46-60", "60+"]
+BASE_DIR = Path(__file__).parent.parent
 
 def load_users():
-    values = pd.read_csv("data/raw/ratings.csv")
+    values = pd.read_csv(BASE_DIR / "data/raw/ratings.csv", usecols=["userId"])
     fake = Faker()
     conn = get_connection()
     cursor = conn.cursor()
@@ -25,3 +27,7 @@ def load_users():
     conn.commit()
     cursor.close()
     conn.close()
+if __name__ == "__main__":
+    load_users()
+    print(f"Users loaded successfully from {BASE_DIR / 'data/raw/ratings.csv'}")
+    
