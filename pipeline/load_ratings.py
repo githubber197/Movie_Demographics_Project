@@ -6,6 +6,7 @@ from load import get_connection
 BASE_DIR = Path(__file__).parent.parent
 def load_ratings():
     values = pd.read_csv(BASE_DIR / "data/raw/ratings.csv", usecols=["userId", "movieId", "rating"])
+    values = values[(values["rating"] >= 0.5) & (values["rating"] <= 5.0)]
     conn = get_connection()
     cursor = conn.cursor()
     links = read_links()
@@ -16,7 +17,8 @@ def load_ratings():
     values["imdb_id"] = values["movieId"].map(links)
     values["db_movie_id"] = values["imdb_id"].map(movie_lookup)
     values = values.dropna(subset=["db_movie_id"])
-    converted_values = list(zip(values["userId"], values["db_movie_id"].astype(int), values["rating"]))
+    converted_values = list(zip(values["userId"], values["db_movie_id"].astype(int), values["rating"])) 
+        
     cursor.executemany(
         "INSERT INTO reviews (user_id, movie_id, movie_rating) VALUES (%s, %s, %s)",
         converted_values
