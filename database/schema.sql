@@ -30,3 +30,4 @@ CREATE TABLE movie_genres(
     genre_id INT NOT NULL REFERENCES genres(genre_id) ON DELETE CASCADE,
     PRIMARY KEY (movie_id, genre_id)
 );
+
