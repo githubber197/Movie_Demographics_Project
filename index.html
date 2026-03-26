@@ -5,8 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Demographics Classifier</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #F5F5F0;
+            color: #1a1a1a;
+        }
+        header {
+            padding: 60px 80px 40px;
+            border-bottom: 1px solid #e0e0d8;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+        section {
+        padding: 60px 80px;
+        border-bottom: 1px solid #e0e0d8;
+        }
+
+    section h2 {
+        font-size: 1.4rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        letter-spacing: -0.3px; 
+    }
+
+    select {
+        margin-top: 16px;
+        padding: 10px 16px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        border: 1px solid #d0d0c8;
+        border-radius: 6px;
+        background: white;
+        color: #1a1a1a;
+        cursor: pointer;
+        outline: none;
+    }
+
+    canvas {
+        margin-top: 32px;
+        max-height: 400px;
+    }
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+        min-width: 200px;
+    }
+    </style>
 </head>
 <body>
+    <header>
+    <h1>Movie Demographics</h1>
+    <p>Exploring how age and location shape movie preferences</p>
+    </header>
    <section>
         <h2>Age Distribution</h2>
         <select id = "ageGroupSelect" onchange="fetchGenres()">
@@ -17,8 +89,10 @@
             <option value="46-60">46-60</option>
             <option value="60+">60+</option>
         </select>
-        <canvas id="ageChart">    
-        </canvas> 
+        <div style="height: 400px; position: relative;">
+            <canvas id="ageChart"></canvas>
+        </div>
+         
     </section>
     <section>
         <h2>Genres Distribution</h2>
@@ -42,13 +116,16 @@
             <option value="War">War</option>
             <option value="Western">Western</option>
         </select>
-        <canvas id="genresChart">    
-        </canvas>
+        <div style="height: 400px; position: relative;;">
+            <canvas id="genresChart" height="400"></canvas>    
+        </div>
+        
     </section>
     <section>  
-        <canvas id="ratingsChart">    
-
-        </canvas>
+        <div style="height: 400px; position: relative;">
+            <canvas id="ratingsChart"></canvas>
+        </div>
+        
     </section>
     <script>    
     let genresChartInstance = null;
@@ -68,8 +145,23 @@
                     labels: data.map(d => d.genre),
                     datasets: [{
                         label: "Count",
-                        data: data.map(d => d.count)
+                        data: data.map(d => d.count),
+                        backgroundColor: '#2D4A6B',
+                        borderRadius: 4
                     }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: { grid : {color : '#e0e0d8'} },
+                        x: { grid : {color : false} }
+                    }
                 }
             });
         })
@@ -88,8 +180,23 @@
                         labels: data.map(d => d.country),
                         datasets: [{
                             label: "Count",
-                            data: data.map(d => d.count)
+                            data: data.map(d => d.count),
+                            backgroundColor: '#2D4A6B',
+                            borderRadius: 4
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: { grid : {color : '#e0e0d8'} },
+                            x: { grid : {color : false} }
+                        }
                     }
                 });
              }
@@ -108,8 +215,23 @@
                         labels: data.map(d => d.age_group),
                         datasets: [{
                             label: "Average Rating",
-                            data: data.map(d => d.avg_rating)
+                            data: data.map(d => d.average_rating),
+                            backgroundColor: '#2D4A6B',
+                            borderRadius: 4
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: { grid : {color : '#e0e0d8'} },
+                            x: { grid : {color : false} }
+                        }
                     }
                 });
              }
