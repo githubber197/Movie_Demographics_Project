@@ -10,7 +10,8 @@ scheduler.add_job(
     trigger='cron',
     hour=0,
     minute=0,
-    id='movie_pipeline'
+    id='movie_pipeline',
+    next_run_time=datetime.now()
 )
 
 print("Scheduler started - pipeline will run every night at midnight")

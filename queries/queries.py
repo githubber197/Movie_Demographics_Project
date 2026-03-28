@@ -16,7 +16,7 @@ def get_countries_by_genre(genre):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT COUNT(users.user_id), users.user_country FROM users JOIN reviews ON users.user_id = reviews.user_id JOIN movies ON reviews.movie_id = movies.movie_id JOIN movie_genres ON movies.movie_id = movie_genres.movie_id JOIN genres ON movie_genres.genre_id = genres.genre_id WHERE genres.genre_name = %s GROUP BY users.user_country ORDER BY COUNT(users.user_id) DESC;
+    SELECT COUNT(users.user_id), users.user_country FROM users JOIN reviews ON users.user_id = reviews.user_id JOIN movies ON reviews.movie_id = movies.movie_id JOIN movie_genres ON movies.movie_id = movie_genres.movie_id JOIN genres ON movie_genres.genre_id = genres.genre_id WHERE genres.genre_name = %s GROUP BY users.user_country ORDER BY COUNT(users.user_id) DESC LIMIT 10;
 
                      """,(genre,))
     result = cursor.fetchall()

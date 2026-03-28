@@ -12,6 +12,11 @@ def load_users():
     fake = Faker()
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Users already loaded, skipping.")
+        return
     for user_id in values["userId"].unique():
         
         name = fake.name()
