@@ -40,7 +40,7 @@ def get_top_movies_by_genre(genre):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-    SELECT movies.movie_title, ROUND(AVG(reviews.movie_rating), 2) AS average_rating FROM movies JOIN reviews ON movies.movie_id = reviews.movie_id JOIN movie_genres ON movies.movie_id = movie_genres.movie_id JOIN genres ON movie_genres.genre_id = genres.genre_id WHERE genres.genre_name = %s GROUP BY movies.movie_title HAVING COUNT(reviews.movie_rating) > 1 ORDER BY average_rating DESC LIMIT 10;
+    SELECT movies.movie_title, ROUND(AVG(reviews.movie_rating), 2) AS average_rating FROM movies JOIN reviews ON movies.movie_id = reviews.movie_id JOIN movie_genres ON movies.movie_id = movie_genres.movie_id JOIN genres ON movie_genres.genre_id = genres.genre_id WHERE genres.genre_name = %s GROUP BY movies.movie_title HAVING COUNT(reviews.movie_rating) > 10 ORDER BY average_rating DESC LIMIT 10;
                     """,(genre,))
     result = cursor.fetchall()
     df = pd.DataFrame(result, columns=["movie_title", "average_rating"])
