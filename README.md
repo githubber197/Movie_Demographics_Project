@@ -1,23 +1,24 @@
-# 🎬 Demographics-Based Movie Analytics Dashboard
+# 🎬 Movie Demographics Dashboard
 
-A data engineering project that analyzes **who watches what** — breaking down movie preferences by age group and country using the MovieLens 25M dataset.
-
-
+A data engineering project that explores **who watches what** — analyzing movie preferences across age groups and countries using the MovieLens 25M dataset.
 ---
 
 ## 📌 Project Overview
 
-This project builds an end-to-end data pipeline that:
-- Ingests 25 million ratings from the MovieLens dataset
-- Enriches movie data with metadata from the OMDB API
+This project builds a full end-to-end data pipeline that:
+- Ingests 25 million real ratings from the MovieLens dataset
+- Enriches movie metadata from the OMDB API (title, genre, plot)
 - Generates mock user demographics (age group, country) using Faker
 - Loads everything into a PostgreSQL database
-- Visualizes insights on an interactive Streamlit dashboard
+- Serves analytics via a FastAPI backend
+- Visualizes insights on a custom HTML/CSS/JS dashboard with Chart.js
 
-The goal is to answer questions like:
+**Questions this project answers:**
 - Which genres does the 18–25 age group watch most?
 - Which countries watch the most Action movies?
-- Which age groups give the highest average ratings?
+- What are the highest rated movies by genre?
+- Which movies have the most reviews?
+- How do genre preferences vary across age groups? (heatmap)
 
 ---
 
@@ -29,10 +30,12 @@ The goal is to answer questions like:
 | Pandas | Data transformation |
 | PostgreSQL | Data storage |
 | psycopg2 | Python-Postgres connection |
-| OMDB API | Movie metadata (title, genre, plot) |
+| OMDB API | Movie metadata |
 | MovieLens 25M | Ratings dataset |
 | Faker | Mock user demographics |
-| Streamlit | Interactive dashboard |
+| FastAPI | REST API backend |
+| Chart.js | Interactive visualizations |
+| APScheduler | Automated daily pipeline runs |
 
 ---
 
@@ -58,7 +61,10 @@ load_movielens.py      extract.py
           queries/queries.py
                 │
                 ▼
-          dashboard.py (Streamlit)
+            api.py (FastAPI)
+                │
+                ▼
+          index.html (Chart.js Dashboard)
 ```
 
 ---
@@ -70,6 +76,19 @@ load_movielens.py      extract.py
 - `genres` — unique genre names
 - `movie_genres` — many-to-many relationship between movies and genres
 - `reviews` — ratings linked to users and movies
+
+---
+
+## 📊 Dashboard Features
+
+| Chart | Description |
+|-------|-------------|
+| Genres by Age Group | Bar chart — which genres each age group watches most |
+| Countries by Genre | Horizontal bar chart — top 10 countries per genre |
+| Average Rating by Age Group | Bar chart — how each age group rates movies |
+| Top Rated Movies by Genre | Table — highest rated movies per genre (10+ ratings) |
+| Most Reviewed Movies | Table — movies with the most ratings overall |
+| Genre/Age Heatmap | Heatmap — average ratings across all age groups and genres |
 
 ---
 
@@ -98,7 +117,6 @@ DB_PASSWORD=your_db_password
 ```
 
 ### 4. Set up the database
-Run the schema in PostgreSQL:
 ```bash
 psql -U your_db_user -d your_db_name -f database/schema.sql
 ```
@@ -108,27 +126,26 @@ psql -U your_db_user -d your_db_name -f database/schema.sql
 # Load mock users
 python pipeline/load_users.py
 
-# Fetch movies from OMDB (1000/day limit)
+# Fetch movies from OMDB (1000 requests/day limit)
 python main.py
 
 # Load ratings
 python pipeline/load_ratings.py
 ```
 
-### 6. Launch the dashboard
+### 6. Start the API
 ```bash
-streamlit run dashboard.py
+uvicorn api:app --reload
 ```
 
----
+### 7. Open the dashboard
+Open `index.html` in your browser using a live server.
 
-## 📊 Analytics Queries
-
-Saved in `queries/demographics.sql`:
-
-- **Genres by age group** — which genres each age group watches most
-- **Countries by genre** — which countries watch a specific genre most
-- **Average rating by age group** — how different age groups rate movies
+### 8. (Optional) Run the scheduler
+Automatically fetches 1000 new movies every night at midnight:
+```bash
+python scheduler.py
+```
 
 ---
 
@@ -137,30 +154,37 @@ Saved in `queries/demographics.sql`:
 ```
 project/
 ├── data/
-│   └── raw/              # MovieLens CSV files
+│   └── raw/                  # MovieLens CSV files
 ├── database/
-│   └── schema.sql        # PostgreSQL schema
+│   └── schema.sql            # PostgreSQL schema
 ├── pipeline/
-│   ├── extract.py        # OMDB API fetching
-│   ├── transform.py      # Data cleaning
-│   ├── load.py           # DB insert functions
-│   ├── load_users.py     # Mock user generation
-│   ├── load_ratings.py   # Ratings pipeline
-│   └── load_movielens.py # MovieLens links reader
+│   ├── extract.py            # OMDB API fetching with retry logic
+│   ├── transform.py          # Data cleaning and validation
+│   ├── load.py               # DB insert functions
+│   ├── load_users.py         # Mock user generation with Faker
+│   ├── load_ratings.py       # Ratings pipeline (vectorized)
+│   └── load_movielens.py     # MovieLens links reader
 ├── queries/
-│   ├── queries.py        # Python query functions
-│   └── demographics.sql  # Raw SQL analytics queries
-├── dashboard.py          # Streamlit dashboard
-├── main.py               # Pipeline orchestrator
+│   ├── queries.py            # Python query functions
+│   └── demographics.sql      # Raw SQL analytics queries
+├── static/
+│   ├── styles.css            # Dashboard styles
+│   └── app.js                # Dashboard JavaScript
+├── index.html                # Dashboard frontend
+├── api.py                    # FastAPI backend
+├── main.py                   # Pipeline orchestrator
+├── scheduler.py              # Automated daily scheduler
 ├── requirements.txt
-└── .env                  # Not committed
+└── .env                      # Not committed
 ```
 
 ---
 
 ## 🔮 Future Improvements
 
-- Add Airflow for pipeline orchestration and scheduling
+- Deploy backend to Railway or Render
+- Deploy frontend to Netlify or GitHub Pages
+- Add Airflow for pipeline orchestration
 - Expand to real user data post-launch
 - Add more demographic filters (gender, region)
-- Deploy dashboard to Streamlit Cloud
+- Add movie search functionality
