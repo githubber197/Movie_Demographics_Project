@@ -109,8 +109,79 @@
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-left">
+        <span class="card-tag">Top Rated</span>
+        <h2>Highest rated movies by genre</h2>
+        <p>
+          Movies with the best average ratings, filtered by genre. Only movies
+          with 10+ ratings included.
+        </p>
+        <select id="topGenreSelect" onchange="fetchTopMoviesByGenre()">
+          <option value="Action">Action</option>
+          <option value="Adventure">Adventure</option>
+          <option value="Animation">Animation</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Crime">Crime</option>
+          <option value="Drama">Drama</option>
+          <option value="Horror">Horror</option>
+          <option value="Romance">Romance</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Thriller">Thriller</option>
+        </select>
+      </div>
+      <div class="card-right">
+        <table id="topMoviesTable">
+          <thead>
+            <tr>
+              <th>Movie</th>
+              <th>Avg Rating</th>
+            </tr>
+          </thead>
+          <tbody id="topMoviesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-left">
+        <span class="card-tag">Most Reviewed</span>
+        <h2>Most reviewed movies</h2>
+        <p>
+          Movies that have received the highest number of ratings from our
+          users.
+        </p>
+      </div>
+      <div class="card-right">
+        <table id="mostReviewedTable">
+          <thead>
+            <tr>
+              <th>Movie</th>
+              <th>Reviews</th>
+            </tr>
+          </thead>
+          <tbody id="mostReviewedTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-left">
+        <span class="card-tag">Heatmap</span>
+        <h2>Genre preferences across age groups</h2>
+        <p>
+          How different age groups rate each genre — darker means higher average
+          rating.
+        </p>
+      </div>
+      <div class="card-right">
+        <div class="chart-container" style="height: 500px">
+          <canvas id="heatmapChart"></canvas>
+        </div>
+      </div>
+    </div>
 
     <script src="static/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.3.0/dist/chartjs-chart-matrix.min.js"></script>
     <footer>
       <p>
         Built with MovieLens 25M · OMDB API · PostgreSQL · FastAPI · Chart.js

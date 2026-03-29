@@ -152,6 +152,37 @@ footer {
   border-top: 1px solid #2a2a2a;
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+th {
+    text-align: left;
+    padding: 12px 16px;
+    color: #666;
+    font-weight: 400;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #1e1e1e;
+    color: #d0d0d0;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background-color: #1a1a1a;
+}
+
 footer {
     padding: 40px 80px;
     color: #444;

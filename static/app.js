@@ -1,6 +1,7 @@
 let genresChartInstance = null;
 let countriesChartInstance = null;
 let ratingsChartInstance = null;
+let heatmapChartInstance = null;
 
 function fetchGenres() {
   const ageGroup = document.getElementById("ageGroupSelect").value;
@@ -122,9 +123,105 @@ function fetchStats() {
         data.total_reviews.toLocaleString();
     });
 }
-document.addEventListener("DOMContentLoaded", function() {
-    fetchStats();
-    fetchGenres();
-    fetchCountries();
-    fetchRatings();
+
+function fetchTopMoviesByGenre() {
+  const genre = document.getElementById("topGenreSelect").value;
+  fetch(`http://localhost:8000/top-movies-by-genre?genre=${genre}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const tableBody = document.getElementById("topMoviesTableBody");
+      tableBody.innerHTML = "";
+      data.forEach((movie) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${movie.movie_title}</td>
+          <td>${movie.average_rating.toFixed(2)}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    });
+}
+
+function fetchMostReviewedMovies() {
+  fetch(`http://localhost:8000/most-reviewed-movies`)
+    .then((response) => response.json())
+    .then((data) => {
+      const tableBody = document.getElementById("mostReviewedTableBody");
+      tableBody.innerHTML = "";
+      data.forEach((movie) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${movie.movie_title}</td>
+          <td>${movie.review_count}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    });
+}
+
+function fetchHeatmap() {
+  fetch("http://localhost:8000/genre-age-heatmap")
+    .then((response) => response.json())
+    .then((data) => {
+      if (heatmapChartInstance) heatmapChartInstance.destroy();
+
+      const ageGroups = [...new Set(data.map((d) => d.age_group))];
+      const genres = [...new Set(data.map((d) => d.genre))];
+
+      const matrixData = data.map((d) => ({
+        x: d.genre,
+        y: d.age_group,
+        v: parseFloat(d.average_rating),
+      }));
+
+      const ctx = document.getElementById("heatmapChart").getContext("2d");
+      heatmapChartInstance = new Chart(ctx, {
+        type: "matrix",
+        data: {
+          datasets: [
+            {
+              label: "Avg Rating",
+              data: matrixData,
+              backgroundColor(context) {
+                const value = context.dataset.data[context.dataIndex]?.v;
+                const alpha = value ? (value - 3.5) / 1 : 0;
+                return `rgba(212, 146, 42, ${Math.max(0.1, Math.min(1, alpha))})`;
+              },
+              width: ({ chart }) =>
+                (chart.chartArea?.width || 0) / genres.length - 2,
+              height: ({ chart }) =>
+                (chart.chartArea?.height || 0) / ageGroups.length - 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              type: "category",
+              labels: genres,
+              grid: { display: false },
+              ticks: { color: "#666" },
+            },
+            y: {
+              type: "category",
+              labels: ageGroups,
+              grid: { display: false },
+              ticks: { color: "#666" },
+            },
+          },
+        },
+      });
+    });
+}
+document.addEventListener("DOMContentLoaded", function () {
+  fetchStats();
+  fetchGenres();
+  fetchCountries();
+  fetchRatings();
+  fetchMostReviewedMovies();
+  fetchTopMoviesByGenre();
+  fetchHeatmap();
 });
