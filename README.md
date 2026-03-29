@@ -92,6 +92,22 @@ load_movielens.py      extract.py
 
 ---
 
+## 🗄️ Schema Design Decisions
+
+**Why a separate `movie_genres` junction table?**
+A single movie can belong to multiple genres (e.g. Action + Thriller). Storing genres directly in the movies table would violate normalization — instead we use a many-to-many junction table linking movies and genres.
+
+**Why is `user_age` a VARCHAR instead of INT?**
+Users are grouped into age ranges (e.g. "18-25") for demographic analysis. Storing ranges as strings is more meaningful than storing individual ages which would require grouping at query time.
+
+**Why does `tmdb_id` have a UNIQUE constraint?**
+Each movie has a unique IMDb ID — allowing duplicates would cause data collisions during inserts and return incorrect results during queries.
+
+**Why ON DELETE CASCADE on reviews?**
+If a user is deleted, their reviews should be deleted too. Without CASCADE, deleting a user would leave orphaned reviews pointing to a non-existent user, breaking referential integrity.
+
+---
+
 ## 🚀 How to Run
 
 ### 1. Clone the repository
